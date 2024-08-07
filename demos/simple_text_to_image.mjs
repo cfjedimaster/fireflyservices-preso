@@ -41,7 +41,7 @@ async function textToImage(prompt, id, token) {
 
 let token = await getAccessToken(CLIENT_ID, CLIENT_SECRET);
 
-let prompt = 'a cat dancing on a rainbow';
+let prompt = 'a bicycle in a dusty garage full of tools';
 let result = await textToImage(prompt, CLIENT_ID, token);
 
 console.log(JSON.stringify(result,null,'\t'));
