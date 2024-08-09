@@ -88,16 +88,13 @@ async function delay(x) {
 
 let prompts = (fs.readFileSync('./prompts.txt','utf8')).trim().split('\n');
 
-/*
-Available sizes for Gen Expand taken from: https://developer.adobe.com/firefly-services/docs/firefly-api/guides/api/generative_expand/V3/
-*/
 let sizes = [{ width: 2500, height: 2500}, {width: 2000, height: 2000}, {width:2500, height: 2000}];
 
 let token = await getAccessToken(CLIENT_ID, CLIENT_SECRET);
 
 for(let prompt of prompts) {
 	
-	console.log(`Generating an image for prompt: ${prompt})`);
+	console.log(`Generating an image for prompt: ${prompt}`);
 
 	let result = await textToImage(prompt, CLIENT_ID, token);
 	
