@@ -95,7 +95,7 @@ console.log('Source and mask uploaded');
 let prompt = 'a moonlit beach at night';
 let result = await fillImage(prompt, sourceImg, maskImg, CLIENT_ID, token);
 for(let i of result.outputs) {
-	let fileName = `${slugify(prompt)}-${i.seed}.jpg`;
+	let fileName = `output/${slugify(prompt)}-${i.seed}.jpg`;
 	await downloadFile(i.image.url, fileName);
 	console.log(`Downloaded ${fileName}`);
 }
