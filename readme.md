@@ -79,4 +79,4 @@ All solutions use an S3 bucket.
 
 `ex6/generate.mjs` is the solution.
 
-`ex6/generate2.mjs` is a WIP (not working yet).
+`ex6/generate2.mjs` demonstrates dynamic colors with each text value.

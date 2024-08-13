@@ -103,8 +103,6 @@ async function applyEdits(psd, text,  outputs, id, token) {
 			}
 		});
 
-console.log(JSON.stringify(data,null,'\t'));
-
 		// Then an output
 		data.outputs.push({
 			"href":output.url,
@@ -171,9 +169,9 @@ let taglines = fs.readFileSync('./taglines.txt','utf8').trim().split('\n');
 
 let sizes = ['1024x1408','1408x1024','1792x1024','1024x1024'];
 let colors = [
-	{'name':'red', 'red':255, 'green':0, 'blue':0},
-	{'name':'green', 'red':0, 'green':255, 'blue':0},
-	{'name':'blue', 'red':0, 'green':0, 'blue':255}];
+	{'name':'red', 'red':65535, 'green':0, 'blue':0},
+	{'name':'green', 'red':0, 'green':65535, 'blue':0},
+	{'name':'blue', 'red':0, 'green':0, 'blue':65535}];
 
 for(let tagline of taglines) {
 	console.log(`Doing tagline ${tagline}`);
@@ -206,6 +204,8 @@ for(let tagline of taglines) {
 			/*
 			So at this point, we have a tagline, we have writable urls for the four sizes, time to call the API
 			*/
+			console.log(`Doing color ${color.name}`);
+
 			let job = await applyEdits(psdTemplate, tagline, outputURLs, CLIENT_ID, token);
 			await pollJob(job['_links'].self.href, CLIENT_ID, token);
 
@@ -213,8 +213,6 @@ for(let tagline of taglines) {
 				await downloadFile(download.url, download.name);
 				console.log(`Saved ${download.name}`);
 			}
-
-			process.exit(1);
 
 		}
 	}
