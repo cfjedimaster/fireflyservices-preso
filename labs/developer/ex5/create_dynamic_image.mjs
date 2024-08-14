@@ -89,7 +89,7 @@ let token = await getAccessToken(CLIENT_ID, CLIENT_SECRET);
 let sourceInput = '../../../assets/sports_bottle.jpg';
 
 let sourceImg = await uploadImage(sourceInput, 'image/jpeg', CLIENT_ID, token);
-let maskImg = await uploadImage('./inverted_a_sports_bottle_on_a_table.jpg', 'image/jpeg', CLIENT_ID, token);
+let maskImg = await uploadImage('./inverted_sports_bottle.jpg', 'image/jpeg', CLIENT_ID, token);
 console.log('Source and mask uploaded');
 
 let prompt = 'a moonlit beach at night';

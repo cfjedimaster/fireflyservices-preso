@@ -14,7 +14,17 @@ import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 // Bucket that stores our test files
-let s3Client = new S3Client({ region: 'us-east-1' });
+const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY;
+const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID;
+
+const s3Client = new S3Client({ 
+	region: 'us-east-1',
+	credentials: {
+		secretAccessKey: S3_SECRET_ACCESS_KEY, 
+		accessKeyId: S3_ACCESS_KEY_ID
+	}
+});
+
 let bucket = 'ffs-demos';
 
 // Credentials for Firefly Services
