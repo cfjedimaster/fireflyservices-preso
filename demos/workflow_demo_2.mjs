@@ -47,7 +47,7 @@ async function getAccessToken(id, secret) {
 	params.append('grant_type', 'client_credentials');
 	params.append('client_id', id);
 	params.append('client_secret', secret);
-	params.append('scope', 'openid,AdobeID,firefly_enterprise,firefly_api,ff_apis');
+	params.append('scope', 'firefly_api,ff_apis,openid,AdobeID,session,additional_info,read_organizations');
 	
 	let resp = await fetch('https://ims-na1.adobelogin.com/ims/token/v3', 
 		{ 
@@ -182,7 +182,7 @@ console.log('Job is done (hopefully successfully)');
 let resultURL = await getSignedDownloadUrl('workflowtemp_thumb.jpg');
 await downloadFile(resultURL, './workflow_thumb_2.jpg');
 
-console.log('Done, and result saved to workflow.jpg and workflow_thumb.jpg');
+console.log('Done, and result saved to workflow.jpg and workflow_thumb_2.jpg');
 
 // Note - not done - cleanup of S3 temp files.
 // Note - not handled - multi-threaded

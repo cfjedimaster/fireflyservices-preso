@@ -10,7 +10,7 @@ async function getAccessToken(id, secret) {
 	params.append('grant_type', 'client_credentials');
 	params.append('client_id', id);
 	params.append('client_secret', secret);
-	params.append('scope', 'openid,AdobeID,firefly_enterprise,firefly_api,ff_apis');
+	params.append('scope', 'firefly_api,ff_apis,openid,AdobeID,session,additional_info,read_organizations');
 	
 	let resp = await fetch('https://ims-na1.adobelogin.com/ims/token/v3', 
 		{ 
@@ -73,7 +73,7 @@ async function expandImage(source, id, token) {
 let token = await getAccessToken(CLIENT_ID, CLIENT_SECRET);
 
 let imageAsset = await uploadImage('./bike.jpg', 'image/jpeg', CLIENT_ID, token);
-console.log('Image resut', JSON.stringify(imageAsset,null,'\t'));
+console.log('Image result', JSON.stringify(imageAsset,null,'\t'));
 
 let result = await expandImage(imageAsset.images[0].id, CLIENT_ID, token);
 

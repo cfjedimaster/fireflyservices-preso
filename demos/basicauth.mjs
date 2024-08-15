@@ -3,13 +3,12 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
 
 async function getAccessToken(id, secret) {
-
 	const params = new URLSearchParams();
 
 	params.append('grant_type', 'client_credentials');
 	params.append('client_id', id);
 	params.append('client_secret', secret);
-	params.append('scope', 'openid,AdobeID,firefly_enterprise,firefly_api,ff_apis');
+	params.append('scope', 'firefly_api,ff_apis,openid,AdobeID,session,additional_info,read_organizations');
 	
 	let resp = await fetch('https://ims-na1.adobelogin.com/ims/token/v3', 
 		{ 

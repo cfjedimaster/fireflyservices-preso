@@ -32,23 +32,23 @@ async function getSignedUploadUrl(path) {
 	return await getSignedUrl(s3Client, command, { expiresIn: 3600 });
 }
 
-async function getAccessToken(id,secret) {
+async function getAccessToken(id, secret) {
 
 	const params = new URLSearchParams();
-	params.append('client_secret', secret);
-	params.append('grant_type', 'client_credentials');
-	params.append('scope', 'openid,AdobeID,read_organizations');
 
-	let resp = await fetch(`https://ims-na1.adobelogin.com/ims/token/v2?client_id=${id}`, 
+	params.append('grant_type', 'client_credentials');
+	params.append('client_id', id);
+	params.append('client_secret', secret);
+	params.append('scope', 'firefly_api,ff_apis,openid,AdobeID,session,additional_info,read_organizations');
+	
+	let resp = await fetch('https://ims-na1.adobelogin.com/ims/token/v3', 
 		{ 
 			method: 'POST', 
 			body: params
 		}
 	);
 
-	let data = await resp.json();
-	return data.access_token;
-
+	return (await resp.json()).access_token;
 }
 
 async function makeATJob(input, output, id, token) {
@@ -91,6 +91,7 @@ let token = await getAccessToken(CLIENT_ID, CLIENT_SECRET);
 let inputURL = await getSignedDownloadUrl('input/goodsourceimage.jpg');
 let uploadURL = await getSignedUploadUrl('output/betterimage.jpg');
 let job = await makeATJob(inputURL, uploadURL, CLIENT_ID, token);
+console.log(job); 
 let jobUrl = job._links.self.href;
 
 let status = '';

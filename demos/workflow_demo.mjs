@@ -168,6 +168,7 @@ while(status !== 'succeeded' && status !== 'failed') {
 		}
 	});
 	let data = await resp.json(); 
+
 	status = data.outputs[0].status;
 	console.log(`Current status: ${status}`);
 	if(status !== 'succeeded' && status !== 'failed') await delay(1000);
