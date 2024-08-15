@@ -8,7 +8,7 @@ async function getAccessToken(id, secret) {
 	params.append('grant_type', 'client_credentials');
 	params.append('client_id', id);
 	params.append('client_secret', secret);
-	params.append('scope', 'openid,AdobeID,firefly_enterprise,firefly_api,ff_apis');
+	params.append('scope', 'firefly_api,ff_apis,openid,AdobeID,session,additional_info,read_organizations');
 	
 	let resp = await fetch('https://ims-na1.adobelogin.com/ims/token/v3', 
 		{ 
@@ -49,7 +49,6 @@ if(process.argv.length < 3) {
 console.log(`Generating an image based on the prompt: ${prompt}`);
 
 let token = await getAccessToken(CLIENT_ID, CLIENT_SECRET);
-
 let result = await textToImage(prompt, CLIENT_ID, token);
 
 console.log(JSON.stringify(result,null,'\t'));
