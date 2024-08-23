@@ -10,22 +10,16 @@ import fs from 'fs';
 import { Readable } from 'stream';
 import { finished } from 'stream/promises';
 
-import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { BlobServiceClient, BlobSASPermissions, generateBlobSASQueryParameters, StorageSharedKeyCredential } from "@azure/storage-blob";
 
-// Bucket that stores our test files
-const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY;
-const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID;
+// Credentials for Azure
+const AZURE_ACCOUNTNAME = process.env.AZURE_ACCOUNTNAME;
+const AZURE_KEY = process.env.AZURE_KEY;
+const AZURE_CONTAINERNAME = process.env.AZURE_CONTAINERNAME;
+const AZURE_CONNECTIONSTRING = process.env.AZURE_CONNECTIONSTRING;
 
-const s3Client = new S3Client({ 
-	region: 'us-east-1',
-	credentials: {
-		secretAccessKey: S3_SECRET_ACCESS_KEY, 
-		accessKeyId: S3_ACCESS_KEY_ID
-	}
-});
-
-let bucket = 'ffs-demos';
+const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_CONNECTIONSTRING);
+const containerClient = blobServiceClient.getContainerClient(AZURE_CONTAINERNAME);
 
 // Credentials for Firefly Services
 let CLIENT_ID = process.env.CLIENT_ID;
@@ -71,14 +65,43 @@ async function pollJob(jobUrl, id, token) {
 
 }
 
-async function getSignedDownloadUrl(path) {
-	let command = new GetObjectCommand({ Bucket: bucket, Key:path });
-	return await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+function createSASReadString(key, accountName, containerName, duration=5) {
+	
+	let permissions = new BlobSASPermissions();
+	permissions.read = true;
+
+	let currentDateTime = new Date();
+	let expiryDateTime = new Date(currentDateTime.setMinutes(currentDateTime.getMinutes()+duration));
+	let blobSasModel = {
+		containerName,
+		permissions,
+		expiresOn: expiryDateTime
+	};
+
+	let credential = new StorageSharedKeyCredential(accountName,key);
+	return generateBlobSASQueryParameters(blobSasModel,credential);
+
 }
 
-async function getSignedUploadUrl(path) {
-	let command = new PutObjectCommand({ Bucket: bucket, Key:path });
-	return await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+function getSignedDownloadUrl(name, key, accountName, containerName) {
+	let b = containerClient.getBlockBlobClient(name);
+	return b.url + '?' + createSASReadString(key, accountName, containerName);
+}
+
+async function getSignedUploadUrl(name, client, containerName, duration=5) {
+	let permissions = new BlobSASPermissions();
+	permissions.write = true;
+
+	let currentDateTime = new Date();
+	let expiryDateTime = new Date(currentDateTime.setMinutes(currentDateTime.getMinutes()+duration));
+	let blobSasModel = {
+		containerName,
+		permissions,
+		expiresOn: expiryDateTime
+	};
+
+	let tempBlockBlobClient = client.getBlockBlobClient(name);
+	return await tempBlockBlobClient.generateSasUrl(blobSasModel);
 }
 
 async function downloadFile(url, filePath) {
@@ -96,7 +119,8 @@ async function uploadFile(url, filePath) {
 		method:'PUT', 
 		headers: {
 			'Content-Type':'image/*',
-			'Content-Length':size
+			'Content-Length':size,
+			'x-ms-blob-type':'BlockBlob'
 		},
 		body: fs.readFileSync(filePath)
 	});
@@ -128,11 +152,11 @@ async function createMask(input, output, id, token) {
 	let data = {
 		"input": {
 			"href": input,
-			"storage": "external"
+			"storage": "azure"
   		},
 		"output": {
 		    "href": output,
-		    "storage": "external",
+		    "storage": "azure",
     		"overwrite": true
 		}
 	};
@@ -154,14 +178,14 @@ async function createActionJSON(input, output, actionJSON, id, token) {
 
 	let data = {
 		"inputs":[{
-			"storage":"external",
+			"storage":"azure",
 			"href":input
 		}],
 		"options":{
 			actionJSON
 		},
 		"outputs":[ {
-			"storage":"external",
+			"storage":"azure",
 			"type":"image/png",
 			"href":output
 		}]
@@ -184,13 +208,13 @@ console.log('Got token for Firefly Services');
 
 // First, upload source
 let fileName = sourceInput.split('/').pop();
-let uploadURL = await getSignedUploadUrl(fileName);
+let uploadURL = await getSignedUploadUrl(fileName, containerClient, AZURE_CONTAINERNAME);
 await uploadFile(uploadURL, sourceInput);
 console.log(`Uploaded ${sourceInput} to cloud storage.`);
 
-let inputURL = await getSignedDownloadUrl(fileName);
+let inputURL = await getSignedDownloadUrl(fileName, AZURE_KEY, AZURE_ACCOUNTNAME, AZURE_CONTAINERNAME);
 let maskedFileName = `masked_${fileName}`;
-let outputURL = await getSignedUploadUrl(maskedFileName);
+let outputURL = await getSignedUploadUrl(maskedFileName, containerClient, AZURE_CONTAINERNAME);
 
 let maskJob = await createMask(inputURL, outputURL, CLIENT_ID, token);
 console.log('Created Mask Job, will now start checking status...')
@@ -199,8 +223,8 @@ let result = await pollJob(maskJob['_links'].self.href, CLIENT_ID, token);
 console.log('Done and assuming success', result);
 
 let invertedMaskFileName = `inverted_${fileName}`;
-inputURL = await getSignedDownloadUrl(maskedFileName);
-let outputInvertedURL = await getSignedUploadUrl(invertedMaskFileName);
+inputURL = await getSignedDownloadUrl(maskedFileName, AZURE_KEY, AZURE_ACCOUNTNAME, AZURE_CONTAINERNAME);
+let outputInvertedURL = await getSignedUploadUrl(invertedMaskFileName, containerClient, AZURE_CONTAINERNAME);
 
 let actionJob = await createActionJSON(inputURL, outputInvertedURL, action, CLIENT_ID, token);
 console.log('Created ActionJSON Job, will now start checking status...')
@@ -208,6 +232,6 @@ console.log('Created ActionJSON Job, will now start checking status...')
 result = await pollJob(actionJob['_links'].self.href, CLIENT_ID, token);
 console.log('Job done, downloading...');
 
-let finalURL = await getSignedDownloadUrl(invertedMaskFileName);
+let finalURL = await getSignedDownloadUrl(invertedMaskFileName, AZURE_KEY, AZURE_ACCOUNTNAME, AZURE_CONTAINERNAME);
 await downloadFile(finalURL, invertedMaskFileName);
 console.log('Done');
