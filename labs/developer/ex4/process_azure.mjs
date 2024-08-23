@@ -2,37 +2,60 @@ import fs from 'fs';
 import { Readable } from 'stream';
 import { finished } from 'stream/promises';
 
-import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-import { S3Client } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { BlobServiceClient, BlobSASPermissions, generateBlobSASQueryParameters, StorageSharedKeyCredential } from "@azure/storage-blob";
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
-const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY;
-const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID;
+// Credentials for Azure
+const AZURE_ACCOUNTNAME = process.env.AZURE_ACCOUNTNAME;
+const AZURE_KEY = process.env.AZURE_KEY;
+const AZURE_CONTAINERNAME = process.env.AZURE_CONTAINERNAME;
+const AZURE_CONNECTIONSTRING = process.env.AZURE_CONNECTIONSTRING;
 
-const s3Client = new S3Client({ 
-	region: 'us-east-1',
-	credentials: {
-		secretAccessKey: S3_SECRET_ACCESS_KEY, 
-		accessKeyId: S3_ACCESS_KEY_ID
-	}
-});
+const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_CONNECTIONSTRING);
+const containerClient = blobServiceClient.getContainerClient(AZURE_CONTAINERNAME);
 
-// Where we will work
-const bucket = 'ffs-demos';
 // Folder to scan
 const folder = '../../../assets/removebg/';
 
-async function getSignedDownloadUrl(path) {
-	let command = new GetObjectCommand({ Bucket: bucket, Key:path });
-	return await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+function createSASReadString(key, accountName, containerName, duration=5) {
+	
+	let permissions = new BlobSASPermissions();
+	permissions.read = true;
+
+	let currentDateTime = new Date();
+	let expiryDateTime = new Date(currentDateTime.setMinutes(currentDateTime.getMinutes()+duration));
+	let blobSasModel = {
+		containerName,
+		permissions,
+		expiresOn: expiryDateTime
+	};
+
+	let credential = new StorageSharedKeyCredential(accountName,key);
+	return generateBlobSASQueryParameters(blobSasModel,credential);
+
 }
 
-async function getSignedUploadUrl(path) {
-	let command = new PutObjectCommand({ Bucket: bucket, Key:path });
-	return await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+function getSignedDownloadUrl(name, key, accountName, containerName) {
+	let b = containerClient.getBlockBlobClient(name);
+	return b.url + '?' + createSASReadString(key, accountName, containerName);
+}
+
+async function getSignedUploadUrl(name, client, containerName, duration=5) {
+	let permissions = new BlobSASPermissions();
+	permissions.write = true;
+
+	let currentDateTime = new Date();
+	let expiryDateTime = new Date(currentDateTime.setMinutes(currentDateTime.getMinutes()+duration));
+	let blobSasModel = {
+		containerName,
+		permissions,
+		expiresOn: expiryDateTime
+	};
+
+	let tempBlockBlobClient = client.getBlockBlobClient(name);
+	return await tempBlockBlobClient.generateSasUrl(blobSasModel);
 }
 
 async function downloadFile(url, filePath) {
@@ -50,7 +73,8 @@ async function uploadFile(url, filePath) {
 		method:'PUT', 
 		headers: {
 			'Content-Type':'image/*',
-			'Content-Length':size
+			'Content-Length':size,
+			'x-ms-blob-type':'BlockBlob'
 		},
 		body: fs.readFileSync(filePath)
 	});
@@ -81,11 +105,11 @@ async function removeBG(input, output, id, token) {
 	let data = {
 		"input": {
 			"href": input,
-			"storage": "external"
+			"storage": "azure"
   		},
 		"output": {
 		    "href": output,
-		    "storage": "external",
+		    "storage": "azure",
     		"overwrite": true
 		}
 	};
@@ -145,19 +169,19 @@ for(let f of files) {
 	console.log(`Working on ${f}`);
 	// first generate an upload link
 	let inputPath = `input/${f}`;
-	let uploadUrl = await getSignedUploadUrl(inputPath);
+	let uploadUrl = await getSignedUploadUrl(inputPath, containerClient, AZURE_CONTAINERNAME);
 	await uploadFile(uploadUrl, folder + f);
 	console.log(`Uploaded ${f} to cloud storage.`);
 
-	let inputUrl = await getSignedDownloadUrl(inputPath);
+	let inputUrl = await getSignedDownloadUrl(inputPath, AZURE_KEY, AZURE_ACCOUNTNAME, AZURE_CONTAINERNAME);
 
 	let outputPath = `output/${f}`;
-	let outputUrl = await getSignedUploadUrl(outputPath);
+	let outputUrl = await getSignedUploadUrl(outputPath, containerClient, AZURE_CONTAINERNAME);
 
 	let job = await removeBG(inputUrl, outputUrl, CLIENT_ID, token);
 	let result = await pollJob(job['_links'].self.href, CLIENT_ID, token);
 
-	let readableOutputUrl = await getSignedDownloadUrl(outputPath);
+	let readableOutputUrl = await getSignedDownloadUrl(outputPath, AZURE_KEY, AZURE_ACCOUNTNAME, AZURE_CONTAINERNAME);
 
 	await downloadFile(readableOutputUrl, `output/${f}_process.jpg`);
 	console.log('Down removing background and saved result.');
