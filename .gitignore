@@ -4,3 +4,4 @@ node_modules/
 .vscode/
 labs/**/*.jpg
 temp/
+demos/workflow*.jpg
