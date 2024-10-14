@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Automating and Scaling the Creative Process with Adobe Firefly Services</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/black.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+
+		<style>
+		.twocol {
+			display: grid;
+			grid-template-columns: 80% 20%;
+		}
+
+		.halfcol {
+			display: grid;
+			grid-template-columns: 50% 50%;
+		}
+		</style>
+
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+				<section>
+					<h2>Automating and Scaling the Creative Process</h2>
+					<h3>with Adobe Firefly Services</h3>
+				</section>
+
+				<section>
+				<div class="twocol">
+				<div>
+					<h2>Me</h2>
+					<ul style="width: 100% !important">
+					<li>Raymond Camden</li>
+					<li>Senior Developer Evangelist for Adobe</li>
+					<li>🕸️ raymondcamden.com</li>
+					<li>✉️ raymondcamden@gmail.com</li>
+					</ul>
+				</div>
+				<div>
+					<img src="img/ray_tiger.jpg" style="max-width:70%">
+				</div>
+				</div>
+				</section>
+
+				<section>
+				<h2>Game Plan</h2>
+				<ul>
+				<li class="fragment">What?</li>
+				<li class="fragment">Why?</li>
+				<li class="fragment">How!</li>
+				</ul>
+				</section>
+
+				<section>
+					<h2>This Deck (and Demos!)</h2>
+					<img src="img/qr.png">
+					<a href="https://github.com/cfjedimaster/fireflyservices-preso" target="_new">github.com/cfjedimaster/fireflyservices-preso</a>
+				</section>
+
+				<section>
+					<h2>What are Firefly Services?</h2>
+				</section>
+
+				<section>
+				<h2>Adobe Firefly Services</h2>
+				<ul>
+				<li class="fragment">Automation solution for content generation at scale</li>
+				<li class="fragment">Set of services (grouped into various "families")</li>
+				</ul>
+				</section>
+
+				<section>
+				<h2>Service Families</h2>
+				<ul>
+				<li class="fragment">Photoshop</li>
+				<li class="fragment">Lightroom</li>
+				<li class="fragment">Firefly</li>
+				<li class="fragment">Content Tagging (not covered today)</li>
+				</ul>
+				</section>
+
+				<section>
+				<h2>Photoshop APIs</h2>
+				<ul>
+				<li class="fragment">Various APIs related to automating aspects of Photoshop
+</li>
+				<li class="fragment">Requires Cloud storage for operations</li>
+				<li class="fragment">Examples:
+					<ul>
+					<li class="fragment">Execute Photoshop Actions</li>
+					<li class="fragment">Create Renditions</li>
+					<li class="fragment">Remove Background</li>
+					</ul>
+				</li>
+				<li class="fragment"><a href="https://developer.adobe.com/firefly-services/docs/photoshop/" target="_new">Docs</a></li>
+				</ul>
+				</section>
+
+				<section>
+				<h2>Photoshop API Examples</h2>
+				<ul>
+				<li class="fragment">Action and ActionJSON endpoints let you automate incredibly complex workflows</li>
+				<li class="fragment">With ActionJSON, you can modify workflows on the fly</li>
+				</ul>
+				</section>
+
+				<section>
+				<img src="img/rembg1.png">
+				</section>
+				<section>
+				<img src="img/rembg2.png">
+				</section>
+
+				<section>
+				<h2>Photoshop API Examples</h2>
+				<ul>
+				<li class="fragment">Smart Object lets you dynamically replace items in an image</li>
+				</ul>
+				<img class="fragment" src="img/so.png">
+				</section>
+
+				<section>
+				<h2>Photoshop API Examples</h2>
+				<ul>
+				<li class="fragment">Text endpoint lets you change text of a layer (text, formatting, style, etc)</li>
+				</ul>
+				<img class="fragment" src="img/text.png">
+				</section>
+
+				<section>
+				<h2>Photoshop API Examples</h2>
+				<ul>
+				<li class="fragment">Remove Background and Generate Mask</li>
+				</ul>
+				</section>
+
+				<section>
+				<img src="img/bg1.png">
+				</section>
+				<section>
+				<img src="img/mask1.png">
+				</section>
+
+				<section>
+				<h2>Lightroom APIs</h2>
+				<ul>
+				<li class="fragment">Various APIs related to automating aspects of Lightroom</li>
+				<li class="fragment">Requires Cloud storage for operations</li>
+				<li class="fragment">Examples:
+					<ul>
+					<li class="fragment">Auto Straighten</li>
+					<li class="fragment">Auto Tone</li>
+					<li class="fragment">Apply Presets</li>
+					</ul>
+				</li>
+				<li class="fragment"><a href="https://developer.adobe.com/firefly-services/docs/lightroom/" target="_new">Docs</a></li>
+				</ul>
+				</section>
+
+				<section>
+				<h2>Lightroom API Examples</h2>
+				<ul>
+				<li class="fragment">Auto Tone applies multiple improvements to an image using AI/ML</li>
+				</ul>
+				<img class="fragment" src="img/tone1.png">
+				</section>
+
+				<section>
+					<img src="img/tone2.jpg"> <img src="img/tone3.jpg">
+				</section>
+
+				<section>
+				<h2>Firefly APIs</h2>
+				<ul>
+				<li class="fragment">Generative AI APIs</li>
+				<li class="fragment">Mirrors (mostly) what’s available at firefly.adobe.com</li>
+				<li class="fragment">Examples:
+					<ul>
+						<li class="fragment">Text to Image</li>
+						<li class="fragment">Generative Expand</li>
+						<li class="fragment">Generate Similar</li>
+					</ul>
+				</li>
+				<li class="fragment"><a href="https://developer.adobe.com/firefly-services/docs/firefly-api/" target="_new">Docs</a></li>
+				</ul>
+				</section>
+
+				<section>
+				<h2>Firefly API Examples</h2>
+				<ul>
+				<li class="fragment">Text to image with prompt, "an athletic sneaker and water bottle on a beach, sunny day"</li>
+				</ul>
+				<img class="fragment" src="img/ff1.png">
+				</section>
+
+				<section>
+				<h2>Firefly API Examples</h2>
+				<ul>
+				<li class="fragment">You can specify "Art" or "Photo" (API will guess if you don't specify)</li>
+				</ul>
+				<img class="fragment" src="img/ff2.png">
+				</section>
+
+				<section>
+				<h2>Firefly API Examples</h2>
+				<ul>
+				<li class="fragment">Style presets (huge list of styles) - like "cool tone", "beautiful" and "chaotic"</li>
+				</ul>
+				<div class="halfcol">
+					<div><img class="fragment" src="img/ff3.png" title="Painting"></div>
+					<div><img class="fragment" src="img/ff4.png" title="Futuristic"></div>
+				</div>
+				</section>
+
+				<section>
+				<h2>Firefly API Examples</h2>
+				<ul>
+				<li class="fragment">Can copy a style from another image</li>
+				<li class="fragment">Can copy structure from another image</li>
+				</ul>
+				</section>
+
+				<section>
+				<img src="img/style1.png">
+				</section>
+
+				<section>
+				<img src="img/structure1.png">
+				</section>
+
+				<section>
+				<h2>Firefly API Examples</h2>
+				<ul>
+				<li class="fragment">Expand Image can either - just expand... or use a prompt to drive the new content</li>
+				</ul>
+				<div class="halfcol">
+					<div><img class="fragment" src="img/tiger1.jpg"></div>
+					<div><img class="fragment" src="img/tiger2.jpg"></div>
+				</div>
+				</section>
+
+				<section>
+				<h2>Firefly API Examples</h2>
+				<ul>
+				<li class="fragment">Prompt: "The sun is rising in the background and trees are visible."</li>
+				</ul>
+				<div class="halfcol">
+					<div><img class="fragment" src="img/tiger1.jpg"></div>
+					<div><img class="fragment" src="img/tiger3.jpg"></div>
+				</div>
+				</section>
+
+				<section>
+				<h2>Content Tagging APIs</h2>
+				<ul>
+				<li class="fragment">Content tagging and organization APIs</li>
+				<li class="fragment">Examples:
+					<ul>
+						<li class="fragment">Keyword tagging</li>
+						<li class="fragment">Color tagging</li>
+						<li class="fragment">OCR</li>
+					</ul>
+				</li>
+				<li class="fragment"><a href="https://experienceleague.adobe.com/en/docs/experience-platform/intelligent-services/content-commerce-ai/overview" target="_new">Docs</a></li>
+				</ul>
+				</section>
+
+				<section>
+					<h2>Why do we need these APIs?</h2>
+					<h3>Examples...</h3>
+				</section>
+
+				<section>
+				<h2>Workflow Automation</h2>
+				<ul>
+				<li class="fragment">Agency needs to create media assets</li>
+				<li class="fragment">Of different sizes - different campaigns - different languages</li>
+				<li class="fragment">Photoshop API can automate creating renditions from an artboard with variations of text and translations - all in one process</li>
+				</ul>
+				</section>
+
+				<section>
+				<h2>Asset Generation</h2>
+				<ul>
+				<li class="fragment">Agency needs to create media assets</li>
+				<li class="fragment">Of different sizes - different campaigns - different languages</li>
+				<li class="fragment">Photoshop API can automate creating renditions from an artboard with variations of text and translations - all in one process</li>
+				<li class="fragment">Firefly API can use GenAI to create new images</li>
+				<li class="fragment">Firefly API can then generatively expand new images for different sizes</li>
+				</ul>
+				</section>
+
+				<section>
+					<h2>How</h2>
+				</section>
+
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+				slideNumber: "c/t",
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
