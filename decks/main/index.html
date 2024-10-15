@@ -304,6 +304,93 @@
 					<h2>How</h2>
 				</section>
 
+				<section>
+				<h2>General Flow</h2>
+				<ul>
+				<li class="fragment">Exchange credentials (client_id and client_secret) for an access token value</li>
+				<li class="fragment">Call the endpoint</li>
+				<li class="fragment">For Firefly APIs, your result is in the response (synch API)</li>
+				<li class="fragment">For Photoshop/Lightroom, your result is a URL (Job)
+					<ul>
+					<li class="fragment">Ping the job URL to monitor the result</li>
+					<li class="fragment">Remember - will be in cloud storage only</li>
+					</ul>
+				</li>
+				</ul>
+				</section>
+
+				<section>
+				<h2>Getting an Access Token</h2>
+				<ul>
+				<li class="fragment">POST to https://ims-na1.adobelogin.com/ims/token/v3</li>
+				<li class="fragment">Pass client_id and client_secret</li>
+				<li class="fragment">Pass grant_type of client_credentials</li>
+				<li class="fragment">Pass scope of "firefly_api,ff_apis,openid,AdobeID,session,additional_info,read_organizations"</li>
+				<li class="fragment">Returns access_token and expires_in</li>
+				</ul>
+				</section>
+
+				<section>
+				<h2>Getting an Access Token</h2>
+				<img src="img/at1.png">
+				</section>
+
+				<section>
+				<h2>Demo</h2>
+				<p>Run demos/basicauth.mjs</p>
+				</section>
+
+				<section>
+				<h2>Making an API Call - Firefly</h2>
+				<ul>
+				<li class="fragment">Check the reference for required vs optional results</li>
+				<li class="fragment">Always includes CLIENT_ID and Access Token</li>
+				<li class="fragment">Make your call</li>
+				<li class="fragment">Handle the responses (URLs)</li>
+				</ul>
+				</section>
+
+				<section>
+				<h2>Making an API Call - Firefly Text to Image</h2>
+				<ul>
+				<li class="fragment">Text to image requires (at minimum) a prompt</li>
+				<li class="fragment">Can specify sizes, number of results, multiple styling options</li>
+				<li class="fragment">Reference: <a href="https://developer.adobe.com/firefly-services/docs/firefly-api/guides/api/image_generation/V3/" target="_new">developer.adobe.com/firefly-services/docs/firefly-api/guides/api/image_generation/V3/</a></li>
+				</ul>
+				</section>
+
+				<section>
+				<img src="img/t2i.png">
+				</section>
+
+				<section>
+				<h2>Demo</h2>
+				<p>Run demos/simple_text_to_image.mjs</p>
+				</section>
+
+				<section>
+				<h2>Making an API Call - Firefly Generative Expand</h2>
+				<ul>
+				<li class="fragment">Requires an uploaded source image (or cloud storage)</li>
+				<li class="fragment">Prompt is optional</li>
+				<li class="fragment">Can specify sizes, number of results, placement options</li>
+				<li class="fragment">Reference: <a href="https://developer.adobe.com/firefly-services/docs/firefly-api/guides/api/generative_expand/V3/ target=_new">developer.adobe.com/firefly-services/docs/firefly-api/guides/api/generative_expand/V3/</a></li>
+				</ul>
+				</section>
+
+				<section>
+				<img src="img/upload1.png">
+				</section>
+				<section>
+				<img src="img/expand1.png">
+				</section>
+
+
+				<section>
+				<h2>Demo</h2>
+				<p>Run demos/simple_expand_image.mjs</p>
+				</section>
+
 			</div>
 		</div>
 
