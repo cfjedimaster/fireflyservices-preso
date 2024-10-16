@@ -94,7 +94,7 @@
 				<ul>
 				<li class="fragment">Various APIs related to automating aspects of Photoshop
 </li>
-				<li class="fragment">Requires Cloud storage for operations</li>
+				<li class="fragment">Requires Cloud storage for operations (S3, Azure, Dropbox)</li>
 				<li class="fragment">Examples:
 					<ul>
 					<li class="fragment">Execute Photoshop Actions</li>
@@ -155,7 +155,7 @@
 				<h2>Lightroom APIs</h2>
 				<ul>
 				<li class="fragment">Various APIs related to automating aspects of Lightroom</li>
-				<li class="fragment">Requires Cloud storage for operations</li>
+				<li class="fragment">Requires Cloud storage for operations  (S3, Azure, Dropbox)</li>
 				<li class="fragment">Examples:
 					<ul>
 					<li class="fragment">Auto Straighten</li>
@@ -389,6 +389,80 @@
 				<section>
 				<h2>Demo</h2>
 				<p>Run demos/simple_expand_image.mjs</p>
+				</section>
+
+				<section>
+				<h2>Making an API Call - Photoshop/Lightroom</h2>
+				<ul>
+				<li class="fragment">Check the reference for required vs optional results</li>
+				<li class="fragment">Ensure inputs are on cloud storage, and have a place for output</li>
+				<li class="fragment">Always includes CLIENT_ID and Access Token</li>
+				<li class="fragment">Make your call</li>
+				<li class="fragment">Result is a "job" URL</li>
+				<li class="fragment">Ping job URL for status</li>
+				</ul>
+				</section>
+
+				<section>
+				<h2>Making an API Call - Lightroom AutoTone</h2>
+				<ul>
+				<li class="fragment">AutoTone requires an input URL, output URL, and image type</li>
+				<li class="fragment">Can specify quality</li>
+				<li class="fragment">Reference: <a href="https://developer.adobe.com/firefly-services/docs/lightroom/api/lightroom_autoTone/" target="_new">developer.adobe.com/firefly-services/docs/lightroom/api/lightroom_autoTone/</a></li>
+				<li class="fragment"><u><strong>Note - will require SDK/custom code for your cloud storage</strong></u></li>
+				</ul>
+				</section>
+
+				<section>
+				<img src="img/atjob.png">
+				</section>
+
+				<section>
+				<img src="img/atjob2.png">
+				</section>
+
+				<section>
+				<h2>Demo</h2>
+				<p>Run demos/simple_autotone.mjs</p>
+				</section>
+
+				<section>
+				<h2>Putting it Together</h2>
+				<ul>
+				<li class="fragment">If using PS/LR, prepare cloud storage</li>
+				<li class="fragment">Coordinate the flow of assets from your source to Firefly/cloud storage</li>
+				<li class="fragment">Build and test the workflow</li>
+				<li class="fragment">Handle exceptions</li>
+				</ul>
+				</section>
+
+				<section>
+				<h2>Workflow Example</h2>
+				<ul>
+				<li class="fragment">Use Firefly to generate an image</li>
+				<li class="fragment">Use Photoshop to render a thumbnail version<sup>*</sup></li>
+				</ul>
+				</section>
+
+				<section>
+				<h2>Demo</h2>
+				<p>
+				Run demos/workflow_demo.mjs and 2 is enough time!
+				</p>
+				</section>
+
+				<section>
+				<h2>Resources</h2>
+				<ul>
+				<li class="fragment"><a href="https://developer.adobe.com/firefly-services/docs/guides/" target="_new">Main Site (docs, api ref, etc)</a></li>
+				<li class="fragment"><a href="https://developer.adobe.com/firefly-services/docs/guides/sdks/" target="_new">SDK</a></li>
+				<li class="fragment"><a href="https://developer.adobe.com/firefly-services/faas/" target="_new">Request Access</a></li>
+				</ul>
+				</section>
+
+				<section>
+				<h2>Questions?</h2>
+				<img src="img/cat_qa.png">
 				</section>
 
 			</div>
